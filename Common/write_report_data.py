@@ -12,13 +12,13 @@ class WriteReport:
         self.template_path = template_path
         self.report_position = GetReportPosition(self.template_path, self.sheet_name)
 
-    def write_ae_stability_data(self, position, value):
+    def write_ae_stability_data(self, ae_position, ae_value):
         try:
             wb = load_workbook(self.template_path)
             sheet = wb[self.sheet_name]
-            for k in position:
-                cell = sheet.cell(row=position[k][0], column=position[k][1])
-                cell.value = value[k]
+            for k in ae_position:
+                cell = sheet.cell(row=ae_position[k][0], column=ae_position[k][1])
+                cell.value = ae_value[k]
             wb.save(self.template_path)
         finally:
             wb.close()

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
+import time
+
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QTimer, QThread, pyqtSignal
@@ -69,20 +71,31 @@ class Image(QtWidgets.QMainWindow, Image_Brightness_UI):
             day = "0%d" % now.day
         else:
             day = now.day
-        time_info = "%d%s%s" % (now.year, month, day)
+        # 时间精确到S
+        time_info = "%d%s%s-%s_%s_%s" % (now.year, month, day, now.hour, now.minute, now.second)
         self.final_report_name = "%s-RGB图像测试报告-%s.xlsx" % (self.yml_data["CameraData"]["device_model_name"], time_info)
-        # self.yml_data["CameraData"]["report_file_name"] = self.final_report_name
+        self.yml_data["CameraData"]["report_file_name"] = self.final_report_name
+        # while True:
+        #     if self.path_is_existed(os.path.join(Config.ae_result_path, self.final_report_name)):
+        #         print("报告已经存在")
+        #         self.err_flag += 1
+        #     else:
+        #         if self.err_flag > 0:
+        #             self.final_report_name = "%s-RGB图像测试报告-%s-(%d).xlsx" % (self.yml_data["CameraData"]["device_model_name"], time_info, self.err_flag)
+        #         else:
+        #             self.final_report_name = "%s-RGB图像测试报告-%s.xlsx" % (self.yml_data["CameraData"]["device_model_name"], time_info)
+        #         break
+        #     time.sleep(0.2)
 
-        if self.path_is_existed(os.path.join(Config.project_outside_path, self.final_report_name)):
-            self.err_flag += 1
-            self.final_report_name = "%s-RGB图像测试报告-%s-(%d).xlsx" % (self.yml_data["CameraData"]["device_model_name"], time_info, self.err_flag)
-        #
+
         self.yml_data["CameraData"]["report_err_flag"] = self.err_flag
         self.yml_data["CameraData"]["report_file_name"] = self.final_report_name
         # # 保存修改后的内容回 YAML 文件
         with open(Config.config_yaml_path, 'w') as file:
             yaml.safe_dump(self.yml_data, file)
-        #
+        print("##########################################")
+        print(self.final_report_name)
+
         # # 显示报告正在生成中
         self.tips.setText("正在生成报告,请等待.....")
         # # 单独线程运行,避免阻塞主线程和 PyQt5 的事件
@@ -115,14 +128,14 @@ class Image(QtWidgets.QMainWindow, Image_Brightness_UI):
             yaml.safe_dump(re_yml_data, file)
 
     def thread_finish(self):
-        path = os.path.join(Config.project_outside_path, self.final_report_name)  # 要检查的路径
+        path = os.path.join(Config.ae_result_path, self.final_report_name)  # 要检查的路径
         if not os.path.exists(path):
             self.tips.setText("生成报告失败,请再次生成")
             self.timer.stop()
-            # self.recover_yaml_data()
-
+            self.recover_yaml_data()
+    #
     def check_report(self):
-        path = os.path.join(Config.project_outside_path, self.final_report_name)  # 要检查的路径
+        path = os.path.join(Config.ae_result_path, self.final_report_name)  # 要检查的路径
         if os.path.exists(path):
             self.tips.setText("报告已经生成:  %s" % self.final_report_name)
             self.timer.stop()  # 如果报告存在，停止定时器
