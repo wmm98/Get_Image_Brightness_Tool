@@ -3,12 +3,13 @@ from openpyxl.styles import Font
 from Common.config import Config
 
 class GetReportPosition:
-    def __init__(self, file_path):
+    def __init__(self, file_path, sheet_name):
         self.file_path = file_path
+        self.sheet_name = sheet_name
 
-    def find_scenario_position_by_keyword(self, keyword, sheet_name):
+    def find_scenario_position_by_keyword(self, keyword):
         wb = load_workbook(self.file_path)
-        sheet = wb[sheet_name]
+        sheet = wb[self.sheet_name]
         for row in sheet.iter_rows():
             for cell in row:
                 if isinstance(cell.value, str) and keyword in cell.value:
@@ -17,13 +18,13 @@ class GetReportPosition:
                     return [cell.row, cell.column]
 
     def get_ae_stability_light_lux_key_word_position(self, key_word, sheet_name):
-        key_position = self.find_scenario_position_by_keyword(key_word, sheet_name)
+        key_position = self.find_scenario_position_by_keyword(key_word, self.sheet_name)
         return key_position
 
     def get_all_ae_stability_light_lux_position(self, key_word, sheet_name):
         # 关键字“光照亮度”占了两行，所以函数需要从 +2 开始
         positions = {}
-        key_position = self.get_ae_stability_light_lux_key_word_position(key_word, sheet_name)
+        key_position = self.get_ae_stability_light_lux_key_word_position(key_word, self.sheet_name)
         print(key_position)
         positions["lux_1000"] = [key_position[0] + 2, key_position[1] + 1]
         positions["lux_500"] = [key_position[0] + 3, key_position[1] + 1]
@@ -34,6 +35,8 @@ class GetReportPosition:
         positions["lux_16"] = [key_position[0] + 8, key_position[1] + 1]
         positions["lux_8"] = [key_position[0] + 9, key_position[1] + 1]
         return positions
+
+
 
 if __name__ == '__main__':
     g_p_s = GetReportPosition(Config.original_template_path)

@@ -35,6 +35,7 @@ class Config:
     template_name = "Template.xlsx"
     report_template_base_path = os.path.join(project_path, "ReportTemplate")
     original_template_path = os.path.join(report_template_base_path, "Template", template_name)
+    copy_template_path = os.path.join(report_template_base_path, template_name)
 
     # 关键词
     light_lux = "光照亮度"

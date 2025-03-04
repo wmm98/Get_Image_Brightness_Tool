@@ -4,6 +4,7 @@ import yaml
 from Common.config import Config
 from Image import get_brihtness
 from Image import split_video
+from Common import get_report_position, write_report_data
 
 
 if not os.path.exists(Config.ae_result_path):
@@ -49,5 +50,31 @@ def run_image_brightness():
             clear_directory(Config.ae_1000lux_frames_path)
             cls_video.extract_frames(os.path.join(ae_convergence_folder_path, ae_cvg_video), Config.ae_1000lux_frames_path)
 
-    # 获取AE稳定性图片文件夹路径，计算亮度值
+    # 获取AE稳定性图片文件夹路径，计算亮度值并写入报告
     ae_stability_folder_path = data["CameraData"]["ae_stability_folder_path"]
+    # 获取AE稳定性测试数据
+    ae_stability_data = {}
+    if os.listdir(ae_stability_folder_path):
+        for ae_stability_img in os.listdir(ae_stability_folder_path):
+            if ae_stability_img.find("8lux") != -1:
+                ae_stability_data["lux_8"] = cls_image_brightness.get_simple_rgb_average(os.path.join(ae_stability_folder_path, ae_stability_img))
+            elif ae_stability_data.find("16lux") != -1:
+                ae_stability_data["lux_16"] = cls_image_brightness.get_simple_rgb_average(os.path.join(ae_stability_folder_path, ae_stability_img))
+            elif ae_stability_data.find("32lux") != -1:
+                ae_stability_data["lux_32"] = cls_image_brightness.get_simple_rgb_average(os.path.join(ae_stability_folder_path, ae_stability_img))
+            elif ae_stability_data.find("64lux") != -1:
+                ae_stability_data["lux_64"] = cls_image_brightness.get_simple_rgb_average(os.path.join(ae_stability_folder_path, ae_stability_img))
+            elif ae_stability_data.find("128lux") != -1:
+                ae_stability_data["lux_128"] = cls_image_brightness.get_simple_rgb_average(os.path.join(ae_stability_folder_path, ae_stability_img))
+            elif ae_stability_data.find("250lux") != -1:
+                ae_stability_data["lux_250"] = cls_image_brightness.get_simple_rgb_average(os.path.join(ae_stability_folder_path, ae_stability_img))
+            elif ae_stability_data.find("500lux") != -1:
+                ae_stability_data["lux_500"] = cls_image_brightness.get_simple_rgb_average(os.path.join(ae_stability_folder_path, ae_stability_img))
+            elif ae_stability_data.find("1000lux") != -1:
+                ae_stability_data["lux_1000"] = cls_image_brightness.get_simple_rgb_average(os.path.join(ae_stability_folder_path, ae_stability_img))
+    # 获取A稳定性需填入数据cell的位置
+    ae_stability_position = get_report_position.GetReportPosition(template_path, Config.ae_stability_sheet_name)
+    # 写入AE稳定性测试数据
+    ae_stability_report = write_report_data.WriteReport(template_path, Config.ae_stability_sheet_name)
+    # 复制到exe当前工作目录下
+    shutil.move(template_path, os.path.join(Config.project_outside_path, data["CameraData"]["report_file_name"]))
