@@ -29,4 +29,15 @@ class Config:
 
     config_yaml_path = os.path.join(project_path, "ui_config.yaml")
 
+    # 报告模板路径
+    ae_stability_sheet_name = "AE稳定性"
+    ae_convergence_sheet_name = "AE收敛"
+    template_name = "Template.xlsx"
+    report_template_base_path = os.path.join(project_path, "ReportTemplate")
+    original_template_path = os.path.join(report_template_base_path, "Template", template_name)
+
+    # 关键词
+    light_lux = "光照亮度"
+
+
 
