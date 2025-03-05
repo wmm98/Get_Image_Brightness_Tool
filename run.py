@@ -79,16 +79,57 @@ def run_image_brightness():
 
     # 获取A稳定性需填入数据cell的位置
     ae_stability_position = get_report_position.GetReportPosition(template_path, Config.ae_stability_sheet_name)
-    as_stability_all_lux_positions = ae_stability_position.get_all_ae_stability_light_lux_position(Config.light_lux)
-    print("位置信息：", as_stability_all_lux_positions)
-    print("测试数据：", ae_stability_data)
-
-    print("+++++++++++++++++++++++++++++++++++++++++++++")
-    print(data["CameraData"]["report_file_name"])
+    as_stability_all_lux_positions = ae_stability_position.get_all_ae_stability_light_lux_position(Config.ae_stability_light_lux)
+    # print("位置信息：", as_stability_all_lux_positions)
+    # print("测试数据：", ae_stability_data)
 
     # 写入AE稳定性测试数据
     ae_stability_report = write_report_data.WriteReport(template_path, Config.ae_stability_sheet_name)
     ae_stability_report.write_ae_stability_data(as_stability_all_lux_positions, ae_stability_data)
+
+
+    # 获取AE收敛3种照度数据，计算亮度值并写入报告
+    # 获取收敛数据
+    ae_convergence_50lux_data = []
+    if os.listdir(Config.ae_50lux_frames_path):
+        for ae_convergence_50lx_img in os.listdir(Config.ae_50lux_frames_path):
+            ae_convergence_50lux_data.append(cls_image_brightness.get_simple_rgb_average(os.path.join(Config.ae_50lux_frames_path, ae_convergence_50lx_img)))
+
+    ae_convergence_400lux_data = []
+    if os.listdir(Config.ae_400lux_frames_path):
+        for ae_convergence_400lx_img in os.listdir(Config.ae_400lux_frames_path):
+            ae_convergence_400lux_data.append(cls_image_brightness.get_simple_rgb_average(
+                os.path.join(Config.ae_400lux_frames_path, ae_convergence_400lx_img)))
+
+    ae_convergence_1000lux_data = []
+    if os.listdir(Config.ae_1000lux_frames_path):
+        for ae_convergence_1000lx_img in os.listdir(Config.ae_1000lux_frames_path):
+            ae_convergence_1000lux_data.append(cls_image_brightness.get_simple_rgb_average(
+                os.path.join(Config.ae_1000lux_frames_path, ae_convergence_1000lx_img)))
+    # print(ae_convergence_50lux_data)
+    # print(ae_convergence_1000lux_data)
+    # print(ae_convergence_400lux_data)
+    # 获取AE收敛需填入数据cell的位置
+    ae_convergence_position = get_report_position.GetReportPosition(template_path, Config.ae_convergence_sheet_name)
+    print("***************************")
+    ae_convergence_50lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_50lx, len(ae_convergence_50lux_data))
+    print(ae_convergence_50lux_positions)
+    ae_convergence_400lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_400lx, len(ae_convergence_400lux_data))
+    print(ae_convergence_400lux_positions)
+    ae_convergence_1000lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_1000lx, len(ae_convergence_1000lux_data))
+    print(ae_convergence_1000lux_positions)
+    # 写入数据到报告
+    ae_convergence_report = write_report_data.WriteReport(template_path, Config.ae_convergence_sheet_name)
+    ae_convergence_report.write_ae_convergence_data(ae_convergence_50lux_positions[:25], ae_convergence_50lux_data[:25])
+    ae_convergence_report.write_ae_convergence_data(ae_convergence_400lux_positions[:25], ae_convergence_400lux_data[:25])
+    ae_convergence_report.write_ae_convergence_data(ae_convergence_1000lux_positions[:25], ae_convergence_1000lux_data[:25])
+
+
+
+
+    print("+++++++++++++++++++++++++++++++++++++++++++++")
+    print(data["CameraData"]["report_file_name"])
+
 
     # 复制到exe当前工作目录下
     shutil.move(template_path, os.path.join(Config.ae_result_path, data["CameraData"]["report_file_name"]))

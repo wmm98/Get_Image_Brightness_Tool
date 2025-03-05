@@ -38,7 +38,12 @@ class Config:
     copy_template_path = os.path.join(report_template_base_path, template_name)
 
     # 关键词
-    light_lux = "光照亮度"
+    ae_stability_light_lux = "光照亮度"
+    ae_convergence_50lx = "50lx"
+    ae_convergence_400lx = "400lx"
+    ae_convergence_1000lx = "1000lx"
+
+
 
 
 

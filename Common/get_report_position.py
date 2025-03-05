@@ -36,6 +36,16 @@ class GetReportPosition:
         positions["lux_8"] = [key_position[0] + 9, key_position[1] + 1]
         return positions
 
+    def get_ae_convergence_positions(self, keyword, data_length):
+        position = []
+        key_position = self.find_scenario_position_by_keyword(keyword)
+        for i in range(1, data_length + 1):
+            position.append([key_position[0] + i, key_position[1]])
+        return position
+
+
+
+
 
 if __name__ == '__main__':
     g_p_s = GetReportPosition(Config.original_template_path)

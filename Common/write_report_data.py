@@ -23,6 +23,18 @@ class WriteReport:
         finally:
             wb.close()
 
+    def write_ae_convergence_data(self, ae_position, ae_value):
+        try:
+            wb = load_workbook(self.template_path)
+            sheet = wb[self.sheet_name]
+            for k in range(len(ae_position)):
+                cell = sheet.cell(row=ae_position[k][0], column=ae_position[k][1])
+                cell.value = ae_value[k]
+            wb.save(self.template_path)
+        finally:
+            wb.close()
+
+
     def write_project_name(self, camera_data):
         try:
             wb = load_workbook(self.template_path)
