@@ -120,13 +120,44 @@ def run_image_brightness():
     print(ae_convergence_1000lux_positions)
     # 写入数据到报告
     ae_convergence_report = write_report_data.WriteReport(template_path, Config.ae_convergence_sheet_name)
-    ae_convergence_report.write_ae_convergence_data(ae_convergence_50lux_positions[:25], ae_convergence_50lux_data[:25])
-    ae_convergence_report.write_ae_convergence_data(ae_convergence_400lux_positions[:25], ae_convergence_400lux_data[:25])
-    ae_convergence_report.write_ae_convergence_data(ae_convergence_1000lux_positions[:25], ae_convergence_1000lux_data[:25])
+    ae_convergence_report.write_ae_convergence_data(ae_convergence_50lux_positions, ae_convergence_50lux_data)
+    ae_convergence_report.write_ae_convergence_data(ae_convergence_400lux_positions, ae_convergence_400lux_data)
+    ae_convergence_report.write_ae_convergence_data(ae_convergence_1000lux_positions, ae_convergence_1000lux_data)
+    # 获取序列号位置，写入帧数序列号
+    len_number_x_position = max(len(ae_convergence_50lux_data), len(ae_convergence_400lux_data), len(ae_convergence_1000lux_data))
+    ae_convergence_number_position = ae_convergence_position.get_frame_num_position(Config.ae_convergence_50lx, len_number_x_position)
+    ae_convergence_report.write_ae_convergence_number_data(ae_convergence_number_position)
+    # 获取结果栏，写入结果数据
+    # 获取最后需要写入的value
+    result_values = {}
+    result_values["calculate_result"] = "统计结果:"
+    result_values["lx_50_frames_sum"] = len(ae_convergence_50lux_data)
+    result_values["lx_400_frames_sum"] = len(ae_convergence_400lux_data)
+    result_values["lx_1000_frames_sum"] = len(ae_convergence_1000lux_data)
+    # 获取最后位置所需要的数据
+    lx_last_positions = {}
+    lx_last_positions["lux_50"] = ae_convergence_50lux_positions[-1]
+    lx_last_positions["lux_400"] = ae_convergence_400lux_positions[-1]
+    lx_last_positions["lux_1000"] = ae_convergence_1000lux_positions[-1]
+    # 获取最后的位置数据
+    results_statistics_positions = ae_convergence_position.get_results_statistics_position(lx_last_positions)
+    # 写入最后的数据
+    ae_convergence_report.write_result_data(results_statistics_positions, result_values)
 
+    # 上边框
+    num_first_position = ae_convergence_number_position[0]
+    x_min_position = num_first_position[0]
+    print("x_min+position", x_min_position)
+    x_max_position = num_first_position[0] + len_number_x_position
+    print("x_max+position", x_max_position)
+    y_min_position = num_first_position[1]
+    print("y_min+position", y_min_position)
+    y_max_position = ae_convergence_1000lux_positions[0][1]
+    print("y_max+position", y_max_position)
+    ae_convergence_report.write_border(x_min_position, x_max_position, y_min_position, y_max_position)
 
-
-
+    # 画折线图
+    ae_convergence_report.writ_line_chart()
     print("+++++++++++++++++++++++++++++++++++++++++++++")
     print(data["CameraData"]["report_file_name"])
 
