@@ -27,6 +27,9 @@ class Config:
     ae_400lux_frames_path = os.path.join(ae_convergence_path, "400lux")
     ae_1000lux_frames_path = os.path.join(ae_convergence_path, "1000lux")
 
+    # 第一帧信息的文本路径
+    first_frame_info_txt = os.path.join(ae_convergence_path, "第一帧信息记录.txt")
+
     config_yaml_path = os.path.join(project_path, "ui_config.yaml")
 
     # 报告模板路径

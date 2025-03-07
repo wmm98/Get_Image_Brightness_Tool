@@ -85,7 +85,7 @@ class WriteReport:
             sheet = wb[self.sheet_name]
             for x in range(x_min, x_max + 1):
                 for y in range(y_min, y_max + 1):
-                    print([x, y])
+                    # print([x, y])
                     cell = sheet.cell(row=x, column=y)
                     cell.border = self.get_border()
                     if x == x_max:
