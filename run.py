@@ -176,7 +176,11 @@ def run_image_brightness():
     ae_convergence_report.write_border(x_min_position, x_max_position, y_min_position, y_max_position)
 
     # 画折线图
-    ae_convergence_report.writ_line_chart()
+    lux_50_chart_param = [ae_convergence_50lux_positions[0], len(ae_convergence_50lux_data)]
+    lux_400_chart_param = [ae_convergence_400lux_positions[0], len(ae_convergence_400lux_data)]
+    lux_1000_chart_param = [ae_convergence_1000lux_positions[0], len(ae_convergence_1000lux_data)]
+    chart_dict_param = {"50lux": lux_50_chart_param, "400lux": lux_400_chart_param, "1000lux": lux_1000_chart_param}
+    ae_convergence_report.writ_line_chart(chart_dict_param)
     print("+++++++++++++++++++++++++++++++++++++++++++++")
     print(data["CameraData"]["report_file_name"])
 
