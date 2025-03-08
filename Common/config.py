@@ -6,18 +6,18 @@ import importlib.util
 class Config:
 
     # # 调试环境
-    project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    project_outside_path = project_path
-    print("**********************************")
-    print("project_path: ", project_path)
-    print("project_outside_path: ", project_outside_path)
-
-    # # 正式目录
-    # project_path = os.path.dirname((os.path.dirname(os.path.abspath(__file__))))
-    # project_outside_path = os.getcwd()
+    # project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # project_outside_path = project_path
     # print("**********************************")
     # print("project_path: ", project_path)
     # print("project_outside_path: ", project_outside_path)
+
+    # # 正式目录
+    project_path = os.path.dirname((os.path.dirname(os.path.abspath(__file__))))
+    project_outside_path = os.getcwd()
+    print("**********************************")
+    print("project_path: ", project_path)
+    print("project_outside_path: ", project_outside_path)
 
 
     # AE结果目录

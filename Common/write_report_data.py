@@ -109,31 +109,16 @@ class WriteReport:
         chart.x_axis.title = '帧数'
         chart.y_axis.title = '亮度均值'
         # 画图表需要 min_row：row-1   row为横坐标
-        data_50lux = Reference(sheet, min_col=param_dict["50lux"][0][1], min_row=param_dict["50lux"][0][0] - 1, max_col=param_dict["50lux"][0][1], max_row=param_dict["50lux"][1])
-        data_400lux = Reference(sheet, min_col=param_dict["400lux"][0][1], min_row=param_dict["400lux"][0][0] - 1, max_col=param_dict["400lux"][0][1], max_row=param_dict["400lux"][1])
-        data_1000lux = Reference(sheet, min_col=param_dict["1000lux"][0][1], min_row=param_dict["1000lux"][0][0] - 1, max_col=param_dict["1000lux"][0][1], max_row=param_dict["1000lux"][1])
+        data_50lux = Reference(sheet, min_col=param_dict["50lux"][0][1], min_row=param_dict["50lux"][0][0] - 1, max_col=param_dict["50lux"][0][1], max_row=param_dict["50lux"][1] - 3)
+        data_400lux = Reference(sheet, min_col=param_dict["400lux"][0][1], min_row=param_dict["400lux"][0][0] - 1, max_col=param_dict["400lux"][0][1], max_row=param_dict["400lux"][1] - 3)
+        data_1000lux = Reference(sheet, min_col=param_dict["1000lux"][0][1], min_row=param_dict["1000lux"][0][0] - 1, max_col=param_dict["1000lux"][0][1], max_row=param_dict["1000lux"][1] - 3)
 
-        y_labels = Reference(sheet, min_col=1, min_row=4, max_row=120)
-
-        # categories = Reference(sheet, min_col=2, min_row=3, max_row=3)
         chart.add_data(data_50lux, titles_from_data=True)
         chart.add_data(data_400lux, titles_from_data=True)
         chart.add_data(data_1000lux, titles_from_data=True)
 
-        x_length = max(param_dict["50lux"][1], param_dict["400lux"][1], param_dict["1000lux"][1])
-        print("x_length", x_length)
-        # chart.set_categories(categories)
-
-        chart.x_axis.scaling.min = 0
-        chart.x_axis.scaling.max = x_length
-        chart.x_axis.majorUnit = 1
-
-        # chart.width = 20  # Set the width of the chart
-        # chart.height = 15  # Set the height of the chart
-
-        # chart.y_axis.scaling.min = 0
-        # chart.y_axis.scaling.max =  # Adjust this value as needed
-        # chart.y_axis.majorUnit = 1
+        chart.width = 25
+        chart.height = 10
 
         sheet.add_chart(chart, "F5")
 
