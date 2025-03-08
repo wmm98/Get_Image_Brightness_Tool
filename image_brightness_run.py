@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import sys
-import time
-
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QTimer, QThread, pyqtSignal
@@ -12,6 +10,15 @@ import os
 import shutil
 from datetime import datetime
 from run import run_image_brightness
+
+import numpy as np
+from PIL import Image
+import cv2
+from openpyxl import load_workbook
+from Common.get_report_position import GetReportPosition
+from openpyxl.styles import Alignment, Border, Side, PatternFill
+from openpyxl.chart import LineChart, Reference
+
 
 class ScriptThread(QThread):
     finished = pyqtSignal()
@@ -86,8 +93,6 @@ class Image(QtWidgets.QMainWindow, Image_Brightness_UI):
         #             self.final_report_name = "%s-RGB图像测试报告-%s.xlsx" % (self.yml_data["CameraData"]["device_model_name"], time_info)
         #         break
         #     time.sleep(0.2)
-
-
         self.yml_data["CameraData"]["report_err_flag"] = self.err_flag
         self.yml_data["CameraData"]["report_file_name"] = self.final_report_name
         # # 保存修改后的内容回 YAML 文件

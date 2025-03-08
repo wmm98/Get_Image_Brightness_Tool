@@ -1,10 +1,6 @@
-import time
-
-from networkx.drawing import shell_layout
 from openpyxl import load_workbook
 from Common.config import Config
 from Common.get_report_position import GetReportPosition
-from datetime import datetime
 from openpyxl.styles import Alignment, Border, Side, PatternFill
 from openpyxl.chart import LineChart, Reference
 
