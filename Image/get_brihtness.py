@@ -85,7 +85,7 @@ class ImageBrightness:
             # 计算两帧之间的变化
             diff = self.calculate_image_difference(previous_image, current_image, use_grayscale)
 
-            # print(f"✅ 计算 {image_files[i]} 与前一帧的变化量：{diff:.2f}")
+            # print(f"✅计算 {image_files[i]} 与前一帧的变化量：{diff:.2f}")
 
             if diff > threshold:
                 first_frame = image_files[i]
@@ -96,7 +96,42 @@ class ImageBrightness:
             previous_image = current_image
 
         if first_frame is None:
-            raise ValueError("⚠️ 没有检测到明显变化的帧，请降低 threshold 阈值后重试。")
+            raise ValueError("⚠️没有检测到明显变化的帧，请降低 threshold 阈值后重试。")
+
+    def find_diff_stability_data(self, data):
+        stable_data = []
+        current_list = []
+
+        for i in range(len(data) - 1):
+            if abs(data[i] - data[i + 1]) < 3:
+                current_list.append({"index": i})
+            else:
+                if current_list:
+                    # current_list.append(data[i])
+                    current_list.append({"index": i})
+                    stable_data.append(current_list)
+                    current_list = []
+        if current_list:
+            # current_list.append(data[-1])
+            current_list.append({"index": i + 1})
+            stable_data.append(current_list)
+        if stable_data:
+            return stable_data
+
+    def get_longest_sublist(self, data):
+        # data：[[{1: 3}, {2: 3}], [{4: 3}, {6: 3}]]
+        max_length = 0
+        max_index = -1
+        longest_sublist = []
+
+        for i, sublist in enumerate(data):
+            if len(sublist) >= max_length:
+                max_length = len(sublist)
+                max_index = i
+                longest_sublist = sublist
+        return longest_sublist
+
+
 
 
 # if __name__ == '__main__':

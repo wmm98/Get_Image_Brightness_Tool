@@ -32,6 +32,7 @@ class Config:
     # 报告模板路径
     ae_stability_sheet_name = "AE稳定性"
     ae_convergence_sheet_name = "AE收敛"
+    ae_convergence_original_data_sheet_name = "AE收敛原始数据"
     template_name = "Template.xlsx"
     report_template_base_path = os.path.join(project_path, "ReportTemplate")
     original_template_path = os.path.join(report_template_base_path, "Template", template_name)

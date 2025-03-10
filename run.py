@@ -120,7 +120,6 @@ def run_image_brightness():
         with open(Config.first_frame_info_txt, "a") as f1:
             f1.write("1000lux图片文件夹里检测到第一帧为： 1000lux\\%s \n" % ae_1000lux_first_frame_name)
         print("第一帧的index: ", ae_1000lux_first_frame_index)
-
         for ae_convergence_1000lx_img in os.listdir(Config.ae_1000lux_frames_path)[ae_1000lux_first_frame_index:]:
             # print(ae_convergence_1000lx_img)
             ae_convergence_1000lux_data.append(cls_image_brightness.get_simple_rgb_average(
@@ -128,31 +127,57 @@ def run_image_brightness():
     # print(ae_convergence_50lux_data)
     # print(ae_convergence_1000lux_data)
     # print(ae_convergence_400lux_data)
+    # 取稳定后的第一帧数据
+    # 1、50lux数据稳定后的第一帧数据的index
+    diff_50lux_data_list = cls_image_brightness.find_diff_stability_data(ae_convergence_50lux_data)
+    stability_50lx_flag_data = cls_image_brightness.get_longest_sublist(diff_50lux_data_list)
+    index_max_50lx = stability_50lx_flag_data[0]["index"] + 1
+
+    # 2、400lux数据稳定后的第一帧数据的index
+    diff_400lux_data_list = cls_image_brightness.find_diff_stability_data(ae_convergence_400lux_data)
+    stability_400lx_flag_data = cls_image_brightness.get_longest_sublist(diff_400lux_data_list)
+    index_max_400lx = stability_400lx_flag_data[0]["index"] + 1
+
+    # 3、1000lux数据稳定后的第一帧数据的index
+    diff_400lux_data_list = cls_image_brightness.find_diff_stability_data(ae_convergence_400lux_data)
+    stability_400lx_flag_data = cls_image_brightness.get_longest_sublist(diff_400lux_data_list)
+    index_max_400lx = stability_400lx_flag_data[0]["index"] + 1
+
+    # 4、1000lux数据稳定后的第一帧数据的index
+    diff_1000lux_data_list = cls_image_brightness.find_diff_stability_data(ae_convergence_1000lux_data)
+    stability_1000lx_flag_data = cls_image_brightness.get_longest_sublist(diff_1000lux_data_list)
+    index_max_1000lx = stability_1000lx_flag_data[0]["index"] + 1
+
+    # 获取序列号位置，写入帧数序列号
+    len_number_x_position = max(len(ae_convergence_50lux_data[:index_max_50lx]),
+                                len(ae_convergence_400lux_data[:index_max_400lx]),
+                                len(ae_convergence_1000lux_data[:index_max_1000lx]))
     # 获取AE收敛需填入数据cell的位置
     ae_convergence_position = get_report_position.GetReportPosition(template_path, Config.ae_convergence_sheet_name)
-    print("***************************")
-    ae_convergence_50lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_50lx, len(ae_convergence_50lux_data))
+    ae_convergence_50lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_50lx, len_number_x_position)
     # print(ae_convergence_50lux_positions)
-    ae_convergence_400lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_400lx, len(ae_convergence_400lux_data))
+    ae_convergence_400lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_400lx, len_number_x_position)
     # print(ae_convergence_400lux_positions)
-    ae_convergence_1000lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_1000lx, len(ae_convergence_1000lux_data))
+    ae_convergence_1000lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_1000lx, len_number_x_position)
     # print(ae_convergence_1000lux_positions)
     # 写入数据到报告
     ae_convergence_report = write_report_data.WriteReport(template_path, Config.ae_convergence_sheet_name)
     ae_convergence_report.write_ae_convergence_data(ae_convergence_50lux_positions, ae_convergence_50lux_data)
     ae_convergence_report.write_ae_convergence_data(ae_convergence_400lux_positions, ae_convergence_400lux_data)
     ae_convergence_report.write_ae_convergence_data(ae_convergence_1000lux_positions, ae_convergence_1000lux_data)
-    # 获取序列号位置，写入帧数序列号
-    len_number_x_position = max(len(ae_convergence_50lux_data), len(ae_convergence_400lux_data), len(ae_convergence_1000lux_data))
+    # # 获取序列号位置，写入帧数序列号
+    # len_number_x_position = max(len(ae_convergence_50lux_data[:index_max_50lx]),
+    #                             len(ae_convergence_400lux_data[:index_max_400lx]),
+    #                             len(ae_convergence_1000lux_data[:index_max_1000lx]))
     ae_convergence_number_position = ae_convergence_position.get_frame_num_position(Config.ae_convergence_50lx, len_number_x_position)
     ae_convergence_report.write_ae_convergence_number_data(ae_convergence_number_position)
     # 获取结果栏，写入结果数据
     # 获取最后需要写入的value
     result_values = {}
     result_values["calculate_result"] = "统计结果:"
-    result_values["lx_50_frames_sum"] = len(ae_convergence_50lux_data)
-    result_values["lx_400_frames_sum"] = len(ae_convergence_400lux_data)
-    result_values["lx_1000_frames_sum"] = len(ae_convergence_1000lux_data)
+    result_values["lx_50_frames_sum"] = index_max_50lx
+    result_values["lx_400_frames_sum"] = index_max_400lx
+    result_values["lx_1000_frames_sum"] = index_max_1000lx
     # 获取最后位置所需要的数据
     lx_last_positions = {}
     lx_last_positions["lux_50"] = ae_convergence_50lux_positions[-1]
@@ -176,14 +201,33 @@ def run_image_brightness():
     ae_convergence_report.write_border(x_min_position, x_max_position, y_min_position, y_max_position)
 
     # 画折线图
-    lux_50_chart_param = [ae_convergence_50lux_positions[0], len(ae_convergence_50lux_data)]
-    lux_400_chart_param = [ae_convergence_400lux_positions[0], len(ae_convergence_400lux_data)]
-    lux_1000_chart_param = [ae_convergence_1000lux_positions[0], len(ae_convergence_1000lux_data)]
+    print("##############################")
+    print(index_max_50lx)
+    print(index_max_400lx)
+    print(index_max_1000lx)
+    lux_50_chart_param = [ae_convergence_50lux_positions[0], index_max_50lx]
+    lux_400_chart_param = [ae_convergence_400lux_positions[0], index_max_400lx]
+    lux_1000_chart_param = [ae_convergence_1000lux_positions[0], index_max_1000lx]
     chart_dict_param = {"50lux": lux_50_chart_param, "400lux": lux_400_chart_param, "1000lux": lux_1000_chart_param}
     ae_convergence_report.writ_line_chart(chart_dict_param)
+
+    # 保留原始数据, 另一个表
+    # 获取AE收敛需填入数据cell的位置
+    ae_convergence_position = get_report_position.GetReportPosition(template_path, Config.ae_convergence_original_data_sheet_name)
+    ae_convergence_50lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_50lx, len(ae_convergence_50lux_data))
+    # print(ae_convergence_50lux_positions)
+    ae_convergence_400lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_400lx, len(ae_convergence_400lux_data))
+    # print(ae_convergence_400lux_positions)
+    ae_convergence_1000lux_positions = ae_convergence_position.get_ae_convergence_positions(Config.ae_convergence_1000lx, len(ae_convergence_1000lux_data))
+    # print(ae_convergence_1000lux_positions)
+    # 写入数据到报告
+    ae_convergence_report = write_report_data.WriteReport(template_path, Config.ae_convergence_original_data_sheet_name)
+    ae_convergence_report.write_ae_convergence_data(ae_convergence_50lux_positions, ae_convergence_50lux_data)
+    ae_convergence_report.write_ae_convergence_data(ae_convergence_400lux_positions, ae_convergence_400lux_data)
+    ae_convergence_report.write_ae_convergence_data(ae_convergence_1000lux_positions, ae_convergence_1000lux_data)
+
     print("+++++++++++++++++++++++++++++++++++++++++++++")
     print(data["CameraData"]["report_file_name"])
-
 
     # 复制到exe当前工作目录下
     shutil.move(template_path, os.path.join(Config.ae_result_path, data["CameraData"]["report_file_name"]))
