@@ -13,7 +13,7 @@ class Image_Brightness_UI(object):
     options = QtWidgets.QFileDialog.Options()
     options |= QtWidgets.QFileDialog.ReadOnly
 
-    with open(conf.config_yaml_path, 'r', encoding="utf-8") as file:
+    with open(conf.config_yaml_path, 'r') as file:
         yml_data = yaml.safe_load(file)
 
     def setupUi(self, MainWindow):
@@ -24,7 +24,7 @@ class Image_Brightness_UI(object):
         self.verticalLayout.setObjectName("verticalLayout")
 
 
-        self.ae_stability_folder_info = QtWidgets.QLabel("上传AE稳定性图片（文件夹）：")
+        self.ae_stability_folder_info = QtWidgets.QLabel("上传AE稳定性图片（文件夹：只包含测试图片）：")
         self.verticalLayout.addWidget(self.ae_stability_folder_info)
         ae_stability_upload_folder_layout = QHBoxLayout()
         self.ae_stability_folder_path_edit = QtWidgets.QLineEdit()
@@ -36,7 +36,7 @@ class Image_Brightness_UI(object):
         self.verticalLayout.addWidget(QtWidgets.QLabel())
 
         # 上传AE收敛视频，可同时上传多个视频，所有的视频格式都可，不是上传文件夹，是视频文件
-        self.ae_convergence_video_info = QtWidgets.QLabel("上传AE收敛视频（文件夹），视频以包含“50lux、400lux、1000lux”字符串命名：")
+        self.ae_convergence_video_info = QtWidgets.QLabel("上传AE收敛视频（文件夹：只包含测试视频），视频以包含“50lux、400lux、1000lux”字符串命名：")
         self.verticalLayout.addWidget(self.ae_convergence_video_info)
         ae_convergence_upload_folder_layout = QHBoxLayout()
         self.ae_convergence_folder_path_edit = QtWidgets.QLineEdit()

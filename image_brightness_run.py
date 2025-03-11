@@ -120,7 +120,7 @@ class Image(QtWidgets.QMainWindow, Image_Brightness_UI):
         self.timer.start(self.check_interval)  # 启动定时器
 
     def recover_yaml_data(self):
-        with open(Config.config_yaml_path, 'r', encoding="utf-8") as file:
+        with open(Config.config_yaml_path, 'r') as file:
             re_yml_data = yaml.safe_load(file)
 
         re_yml_data["CameraData"]["device_model_name"] = ''

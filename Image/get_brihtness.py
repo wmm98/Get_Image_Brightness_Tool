@@ -39,22 +39,33 @@ class ImageBrightness:
         return total_mean
 
     def calculate_image_difference(self, image1, image2, use_grayscale=True):
+        print(image1)
         """
         计算两张图片的差异程度。
         - use_grayscale=True：使用感知亮度计算（更符合人眼视觉）
         - use_grayscale=False：使用 RGB 直接差异计算
         """
-        img1 = np.array(image1)
-        img2 = np.array(image2)
+        # img1 = np.array(image1)
+        # img2 = np.array(image2)
+        #
+        # if use_grayscale:
+        #     # 转换为感知亮度（更符合人眼感知的亮度变化）
+        #     img1 = np.dot(img1[..., :3], [0.299, 0.587, 0.114])
+        #     img2 = np.dot(img2[..., :3], [0.299, 0.587, 0.114])
+        #
+        # # 计算像素级绝对差异
+        # diff = np.abs(img1 - img2)
+        # return np.mean(diff)
 
-        if use_grayscale:
-            # 转换为感知亮度（更符合人眼感知的亮度变化）
-            img1 = np.dot(img1[..., :3], [0.299, 0.587, 0.114])
-            img2 = np.dot(img2[..., :3], [0.299, 0.587, 0.114])
+        img1 = Image.open(image1).convert("RGB")
+        rgb_array1 = np.array(img1)
+        img1_brightness = round(np.mean(rgb_array1), 3)
 
-        # 计算像素级绝对差异
-        diff = np.abs(img1 - img2)
-        return np.mean(diff)
+        img2 = Image.open(image2).convert("RGB")
+        rgb_array2 = np.array(img2)
+        img2_brightness = round(np.mean(rgb_array2), 3)
+
+        return abs(img1_brightness - img2_brightness)
 
     def find_first_frame(self, image_folder, threshold=20, use_grayscale=True):
         """
@@ -83,17 +94,20 @@ class ImageBrightness:
             current_image = current_image.resize((width, height))
 
             # 计算两帧之间的变化
-            diff = self.calculate_image_difference(previous_image, current_image, use_grayscale)
+            diff = self.calculate_image_difference(first_image_path, current_image_path, use_grayscale)
+            # diff = self.calculate_image_difference(previous_image, current_image, use_grayscale)
+            # diff = abs(previous_image - current_image)
 
-            # print(f"✅计算 {image_files[i]} 与前一帧的变化量：{diff:.2f}")
+            print(f"✅计算 {image_files[i]} 与第一帧的变化量：{diff:.2f}")
 
             if diff > threshold:
                 first_frame = image_files[i]
-                # print(f"🎯 发现变化帧：{first_frame} (变化量 {diff:.2f} > 阈值 {threshold})")
+                print(f"🎯 发现变化帧：{first_frame} (变化量 {diff:.2f} > 阈值 {threshold})")
                 # 返回照片名称，照片的索引
                 return {"image_name": first_frame, "image_index": i}
 
-            previous_image = current_image
+            # previous_image = current_image
+            # first_image_path = current_image_path
 
         if first_frame is None:
             raise ValueError("⚠️没有检测到明显变化的帧，请降低 threshold 阈值后重试。")
