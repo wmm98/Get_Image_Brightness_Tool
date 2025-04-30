@@ -3,6 +3,7 @@ from Common.config import Config
 from Common.get_report_position import GetReportPosition
 from openpyxl.styles import Alignment, Border, Side, PatternFill
 from openpyxl.chart import LineChart, Reference
+import os
 
 
 class WriteReport:
@@ -24,8 +25,10 @@ class WriteReport:
             wb = load_workbook(self.template_path)
             sheet = wb[self.sheet_name]
             for k in ae_position:
-                cell = sheet.cell(row=ae_position[k][0], column=ae_position[k][1])
-                cell.value = ae_value[k]
+                # 判断是不是存在键：K
+                if k in ae_value:
+                    cell = sheet.cell(row=ae_position[k][0], column=ae_position[k][1])
+                    cell.value = ae_value[k]
             wb.save(self.template_path)
         finally:
             wb.close()
@@ -63,6 +66,8 @@ class WriteReport:
             wb = load_workbook(self.template_path)
             sheet = wb[self.sheet_name]
             yellow_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+            print(result_positions)
+            print(result_values)
             for result in result_positions:
                 cell = sheet.cell(row=result_positions[result][0], column=result_positions[result][1])
                 if result == "calculate_result":
@@ -105,13 +110,15 @@ class WriteReport:
         chart.x_axis.title = '帧数'
         chart.y_axis.title = '亮度均值'
         # 画图表需要 min_row：row-1   row为横坐标
-        data_50lux = Reference(sheet, min_col=param_dict["50lux"][0][1], min_row=param_dict["50lux"][0][0] - 1, max_col=param_dict["50lux"][0][1], max_row=param_dict["50lux"][1] + 3)
-        data_400lux = Reference(sheet, min_col=param_dict["400lux"][0][1], min_row=param_dict["400lux"][0][0] - 1, max_col=param_dict["400lux"][0][1], max_row=param_dict["400lux"][1] + 3)
-        data_1000lux = Reference(sheet, min_col=param_dict["1000lux"][0][1], min_row=param_dict["1000lux"][0][0] - 1, max_col=param_dict["1000lux"][0][1], max_row=param_dict["1000lux"][1] + 3)
-
-        chart.add_data(data_50lux, titles_from_data=True)
-        chart.add_data(data_400lux, titles_from_data=True)
-        chart.add_data(data_1000lux, titles_from_data=True)
+        if os.listdir(Config.ae_50lux_frames_path):
+            data_50lux = Reference(sheet, min_col=param_dict["50lux"][0][1], min_row=param_dict["50lux"][0][0] - 1, max_col=param_dict["50lux"][0][1], max_row=param_dict["50lux"][1] + 3)
+            chart.add_data(data_50lux, titles_from_data=True)
+        if os.listdir(Config.ae_400lux_frames_path):
+            data_400lux = Reference(sheet, min_col=param_dict["400lux"][0][1], min_row=param_dict["400lux"][0][0] - 1, max_col=param_dict["400lux"][0][1], max_row=param_dict["400lux"][1] + 3)
+            chart.add_data(data_400lux, titles_from_data=True)
+        if os.listdir(Config.ae_1000lux_frames_path):
+            data_1000lux = Reference(sheet, min_col=param_dict["1000lux"][0][1], min_row=param_dict["1000lux"][0][0] - 1, max_col=param_dict["1000lux"][0][1], max_row=param_dict["1000lux"][1] + 3)
+            chart.add_data(data_1000lux, titles_from_data=True)
 
         chart.width = 25
         chart.height = 10
@@ -120,7 +127,6 @@ class WriteReport:
 
         wb.save(self.template_path)
         wb.close()
-
 
 
 if __name__ == '__main__':

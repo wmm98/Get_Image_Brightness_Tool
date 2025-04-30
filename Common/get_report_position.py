@@ -1,3 +1,5 @@
+import os.path
+
 from openpyxl import load_workbook
 from openpyxl.styles import Font
 from Common.config import Config
@@ -45,17 +47,35 @@ class GetReportPosition:
 
     def get_results_statistics_position(self, data_dict):
         # data_dict{"50lux":[1, 2], "400lux":[2, 3], "1000":[5,4]}
-        x_lux_positions = [data_dict["lux_50"][0], data_dict["lux_400"][0], data_dict["lux_1000"][0]]
+        # x_lux_positions = [data_dict["lux_50"][0], data_dict["lux_400"][0], data_dict["lux_1000"][0]]
+        x_lux_positions = [data_dict[k][0] for k in data_dict.keys()]
         x_max = max(x_lux_positions)
-        y_max = data_dict["lux_1000"][1]
+        # y_max = data_dict["lux_1000"][1]
+        y_max = max([data_dict[k][1] for k in data_dict.keys()])
 
-        lx_50_result_position = [x_max + 1, y_max - 2]
-        lx_400_result_position = [x_max + 1, y_max - 1]
-        lx_1000_result_position = [x_max + 1, y_max]
+        if os.listdir(Config.ae_1000lux_frames_path):
+            lx_50_result_position = [x_max + 1, y_max - 2]
+            lx_400_result_position = [x_max + 1, y_max - 1]
+            lx_1000_result_position = [x_max + 1, y_max]
+            frame_que_position = [x_max + 1, y_max - 3]
+        elif os.listdir(Config.ae_400lux_frames_path):
+            lx_50_result_position = [x_max + 1, y_max - 1]
+            lx_400_result_position = [x_max + 1, y_max]
+            frame_que_position = [x_max + 1, y_max - 2]
+        elif os.listdir(Config.ae_1000lux_frames_path):
+            lx_50_result_position = [x_max + 1, y_max]
+            frame_que_position = [x_max + 1, y_max - 1]
 
-        frame_que_position = [x_max + 1, y_max - 3]
         # 最后一行的数据
-        result_dict = {"calculate_result": frame_que_position, "lx_50_frames_sum": lx_50_result_position, "lx_400_frames_sum": lx_400_result_position, "lx_1000_frames_sum": lx_1000_result_position}
+        result_dict = {}
+        result_dict["calculate_result"] = frame_que_position
+        if os.listdir(Config.ae_50lux_frames_path):
+            result_dict["lx_50_frames_sum"] = lx_50_result_position
+        if os.listdir(Config.ae_400lux_frames_path):
+            result_dict["lx_400_frames_sum"] = lx_400_result_position
+        if os.listdir(Config.ae_1000lux_frames_path):
+            result_dict["lx_1000_frames_sum"] = lx_1000_result_position
+        # result_dict = {"calculate_result": frame_que_position, "lx_50_frames_sum": lx_50_result_position, "lx_400_frames_sum": lx_400_result_position, "lx_1000_frames_sum": lx_1000_result_position}
         return result_dict
 
     def get_frame_num_position(self, keyword, max_list_len):

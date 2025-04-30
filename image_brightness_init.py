@@ -24,7 +24,7 @@ class Image_Brightness_UI(object):
         self.verticalLayout.setObjectName("verticalLayout")
 
 
-        self.ae_stability_folder_info = QtWidgets.QLabel("上传AE稳定性图片（文件夹：只包含测试图片）：")
+        self.ae_stability_folder_info = QtWidgets.QLabel("上传AE稳定性图片（文件夹：只包含测试图片），图片以包含“50lux、400lux、1000lux”字符串命名：")
         self.verticalLayout.addWidget(self.ae_stability_folder_info)
         ae_stability_upload_folder_layout = QHBoxLayout()
         self.ae_stability_folder_path_edit = QtWidgets.QLineEdit()
