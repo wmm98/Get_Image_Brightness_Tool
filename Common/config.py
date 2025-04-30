@@ -17,6 +17,7 @@ class Config:
     print("project_outside_path: ", project_outside_path)
 
 
+
     # AE结果目录
     ae_result_path = os.path.join(project_outside_path, "ae_result")
     ae_convergence_path = os.path.join(ae_result_path, "convergence")
